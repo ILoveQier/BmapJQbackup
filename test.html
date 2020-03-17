@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+<!-- 百度地图3.0 离线API Begin -->
+<script type="text/javascript" src="./map3.0_init.js"></script>
+<script type="text/javascript" src="./map3.0.js"></script>
+<script type="text/javascript" src="./library/DistanceTool_min.js"></script>
+<script type="text/javascript" src="./library/DrawingManager_min.js"></script>
+<link rel="stylesheet" href="./library/DrawingManager_min.css">
+<link rel="stylesheet" href="https://at.alicdn.com/t/font_1680344_fuc1jd21vue.css">
+<!-- 百度地图3.0 End -->
+<script type="text/javascript" src="./jquery.js"></script>
+<!-- <script type="text/javascript" src="./layer.js"></script> -->
+
+
+<style type="text/css">
+    * {
+        user-select: none;
+    }
+
+    .iconfont {
+        font-family: "iconfont" !important;
+        font-size: 42px;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-stroke-width: 0.2px;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body,
+    html {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        font-family: "微软雅黑";
+    }
+
+    #allmap {
+        width: 100%;
+        height: 500px;
+        overflow: hidden;
+    }
+
+    #result {
+        width: 100%;
+        font-size: 12px;
+        height: 200px;
+    }
+
+    dl,
+    dt,
+    dd,
+    ul,
+    li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    p {
+        font-size: 12px;
+    }
+
+    dt {
+        font-size: 14px;
+        font-family: "微软雅黑";
+        font-weight: bold;
+        border-bottom: 1px dotted #000;
+        padding: 5px 0 5px 5px;
+        margin: 5px 0;
+    }
+
+    dd {
+        padding: 5px 0 0 5px;
+    }
+
+    li {
+        line-height: 28px;
+    }
+
+    input[type="checkbox"] {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 30px;
+        margin-right: 10px;
+        position: relative;
+        cursor: pointer;
+    }
+
+    input[type="checkbox"]::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #fff;
+        width: 100%;
+        height: 100%;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+    }
+
+    input[type="checkbox"]:checked::before {
+        content: "\2713";
+        background-color: #fff;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: 1px solid #7D7D7D;
+        border-radius: 4px;
+        color: #7D7D7D;
+        font-size: 20px;
+        font-weight: bold;
+    }
+</style>
+<!-- 全局 -->
+<style>
+    #allmap {
+        height: 100%;
+        display: flex;
+    }
+
+    .map-icon .iconfont {
+        font-size: 35px;
+    }
+
+    .map-icon {
+        min-width: 50px;
+        color: rgb(61, 61, 230);
+        font-size: 12px;
+        cursor: pointer;
+        width: fit-content;
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 5px 10px;
+        border: 2px solid transparent;
+
+    }
+
+    .map-icon span {
+        margin-top: 10px;
+    }
+
+    .allmap-right .cancel {
+        cursor: pointer;
+        padding: 5px 10px;
+        background-color: #eee;
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+
+    .allmap-right .confirm {
+        cursor: pointer;
+        padding: 5px 10px;
+        color: #fff;
+        background-color: rgb(4, 122, 4);
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+</style>
+
+<!-- 左边 -->
+<style>
+    .allmap-left {
+        width: 220px;
+        padding: 10px;
+        background-color: #fff;
+        box-shadow: 0px 5px 15px 0px rgb(36, 33, 33);
+        position: relative;
+    }
+
+    .map-left-mark,
+    .map-left-measure {
+        flex-wrap: wrap;
+        display: flex;
+        justify-content: space-around;
+        height: 80%;
+    }
+
+    .map-left-mark .img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .map-left-task {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+
+    .map-left-task .map-left-plan {
+        margin-top: 30px;
+        width: 100%;
+        height: 40%;
+        text-align: center;
+    }
+
+    .map-left-task .map-left-plan .title {
+        font-size: 16px;
+        border-bottom: 1px solid #000;
+        margin-bottom: 10px;
+    }
+
+    .map-left-task .map-left-plan .content {
+        width: calc(100% + 17px);
+        height: calc(100% + 17px);
+        overflow: auto;
+    }
+
+    .map-left-task .map-left-plan .content div {
+        font-size: 12px;
+        padding: 10px;
+        margin: 5px 0;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+
+    .map-left-task .map-left-plandetail {
+        width: 100%;
+        height: 40%;
+        background-color: #eee;
+        margin-bottom: 20px;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .map-left-task .map-left-plandetail .detail-item {
+        font-size: 14px;
+        margin: 10px 0;
+    }
+
+
+    .allmap-left>.close {
+        border-radius: 50%;
+        background-color: #fff;
+        cursor: pointer;
+        color: red;
+        top: 50%;
+        right: -25px;
+        z-index: 2;
+        transform: translateY(50%);
+        position: absolute;
+    }
+</style>
+
+<!-- 右边 -->
+<style>
+    .allmap-right {
+        flex: 1;
+        background-color: #baf;
+        margin-left: 5px;
+        position: relative;
+    }
+
+    .allmap-right .map-right-top {
+        top: 20px;
+        left: 15%;
+        height: 70px;
+        padding-left: 30px;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        z-index: 99;
+    }
+
+    .allmap-right .map-right-top .parent-btn,
+    .child-btn {
+        width: fit-content;
+        display: flex;
+        box-shadow: 0px 5px 11px 0px #1d1d1c;
+        font-size: 12px;
+    }
+
+    .allmap-right .map-right-top .child-btn {
+        margin-left: 20px;
+    }
+
+
+    .allmap-right .map-right-top span {
+        display: inline-block;
+        padding: 10px 25px;
+        background-color: #fff;
+        color: rgb(161, 158, 158);
+        cursor: pointer;
+    }
+
+    .allmap-right .map-right-top .parent-btn span:nth-child(2) {
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+    }
+
+    .allmap-right .take-photo {
+        position: absolute;
+        bottom: 5%;
+        right: 5%;
+        font-size: 80px;
+        color: rgba(33, 91, 199, .8);
+        cursor: pointer;
+    }
+
+
+
+    #map-right-realmap {
+        height: 100%;
+    }
+
+
+
+    /* 展示 */
+    .allmap-right .show-name-wrap {
+        position: fixed;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid rgb(27, 26, 26);
+        z-index: 99;
+    }
+
+    .map-right-areaAndLine {
+        position: fixed;
+        right: 50px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 200px;
+        height: 300px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        background-color: rgba(233, 227, 227, 0.8);
+        z-index: 99;
+    }
+
+    .map-right-areaAndLine .title {
+        border-bottom: 2px solid black;
+        background-color: #eee;
+        line-height: 40px;
+        font-size: 18px;
+    }
+
+    .map-right-areaAndLine .check-wrap {
+        margin: 20px;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .map-right-areaAndLine .check-wrap .check-content {
+        width: calc(100% + 17px);
+        height: calc(100%);
+        overflow: auto;
+    }
+
+    .map-right-areaAndLine .check-wrap .check-item {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+    }
+
+    .map-right-areaAndLine .check-wrap .check-item label {
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+    }
+
+    .map-right-areaAndLine .add {
+        background-color: rgb(140, 197, 8);
+        font-size: 32px;
+        color: rgb(20, 20, 184);
+        cursor: pointer;
+    }
+</style>
+
+<!-- 遮罩 -->
+<style>
+    /* 遮罩-输入 */
+    #inputNameWrap {
+        position: fixed;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #aaa;
+        z-index: 99;
+    }
+
+    #inputNameWrap .input-content-wrap {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #inputNameWrap .input-content-wrap .input-content {
+        margin: 10px 5px;
+    }
+
+    #inputNameWrap .input-btn {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    /* 遮罩-增加条目 */
+    #areaOrLineAddMask {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, .8);
+        top: 0;
+        left: 0;
+        z-index: 99;
+        display: none;
+    }
+
+    #areaOrLineAddMask .add-wrap {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #areaOrLineAddMask .add-content {
+        background-color: #fff;
+        border-radius: 10px;
+        min-width: 400px;
+        padding: 0 40px 40px 40px;
+        box-sizing: border-box;
+    }
+
+    #areaOrLineAddMask .add-content .add-type {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+    #areaOrLineAddMask .add-content .add-item {
+        margin-bottom: 20px;
+    }
+
+    #areaOrLineAddMask .add-content .add-btn {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    #areaOrLineAddMask .add-content .add-item input {
+        height: 30px;
+    }
+
+    #areaOrLineAddMask .add-content .add-item select {
+        width: 100px;
+        height: 30px;
+        line-height: 30px;
+    }
+</style>
+<!-- 高亮小功能 -->
+<style>
+    .is-btn-current {
+        background-color: rgb(120, 212, 248) !important;
+    }
+
+    .is-icon-choose {
+        border-color: rgb(37, 155, 190);
+    }
+
+    .map-left-plan .current-plan-choose {
+        color: #fff;
+        background: #33b73e;
+    }
+
+    .map-left-plan .content div:hover {
+        color: #fff;
+        background: #d43808;
+    }
+</style>
+
+<body>
+    <div id="allmap">
+        <div class="allmap-left">
+            <div class="close">
+                <i class="iconfont icon-guanbi "></i>
+            </div>
+            <div class="map-left-mark">
+                <!-- <div class="map-icon" data-id="0">
+                    <i class="iconfont icon-yuan"></i>
+                    <span>航点</span>
+                </div>
+                <div class="map-icon" data-id="1">
+                    <i class="iconfont icon-lingxing"></i>
+                    <span>空域</span>
+                </div>
+                <div class="map-icon" data-id="2">
+                    <i class="iconfont icon-biaoqian"></i>
+                    <span>军事特殊标志</span>
+                </div>
+                <div class="map-icon">
+                    <i class="iconfont icon-weibiaoti-3"></i>
+                    <span>航空类专用标志</span>
+                </div>
+                <div class="map-icon">
+                    <i class="iconfont icon-lubiao"></i>
+                    <span>障碍物</span>
+                </div>
+                <div class="map-icon">
+                    <i class="iconfont icon-ditu2"></i>
+                    <span>地形地物</span>
+                </div>
+                <div class="map-icon">
+                    <i class="iconfont icon-tuxiang"></i>
+                    <span>图像</span>
+                </div>
+                <div class="map-icon">
+                    <i class="iconfont icon-yijia "></i>
+                    <span>高度</span>
+                </div>
+                <div class="map-icon">
+                    <i class="iconfont icon-ipad"></i>
+                    <span>导航设备</span>
+                </div> -->
+            </div>
+            <div class="map-left-measure">
+                <!-- <div class="map-icon" data-id="0">
+                    <i class="iconfont icon-ceju"></i>
+                    <span>测距</span>
+                </div>
+                <div class="map-icon" data-id="1">
+                    <i class="iconfont icon-sanjiaochi"></i>
+                    <span>测量角度</span>
+                </div> -->
+            </div>
+            <div class="map-left-task">
+                <div class="map-left-plan">
+                    <div class="title">飞行日计划</div>
+                    <div style="overflow: hidden;width: 100%;height: 100%;">
+                        <div class="content">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="map-left-plandetail">
+
+                </div>
+            </div>
+        </div>
+        <div class="allmap-right">
+            <div class="map-right-top">
+                <div class="parent-btn">
+                    <span data-id="0">标记</span>
+                    <span data-id="1">测量</span>
+                    <span data-id="2">下达任务</span>
+                </div>
+                <div class="child-btn">
+                    <span data-id="0">空域</span>
+                    <span data-id="1">航线</span>
+                </div>
+            </div>
+            <div id="map-right-realmap">
+            </div>
+            <!-- 遮罩-弹框输入框 -->
+            <div id="inputNameWrap">
+                <div class="input-content-wrap">
+
+                </div>
+                <div class="input-btn">
+                    <span class="cancel">取消</span>
+                    <span class="confirm">确定</span>
+                </div>
+            </div>
+            <!-- 显示空域和航线 -->
+            <div class="map-right-areaAndLine">
+                <div class="title"></div>
+                <div class="check-wrap">
+
+                </div>
+                <div class="add" id="alAddbtn">
+                    <span>+</span>
+                </div>
+            </div>
+            <!-- 遮罩-添加 -->
+            <div id="areaOrLineAddMask">
+                <div class="add-wrap">
+                    <div class="add-content">
+                        <div class="add-type">
+
+                        </div>
+                        <div class="add-item-wrap">
+
+                        </div>
+                        <div class="add-btn">
+                            <span class="cancel">取消</span>
+                            <span class="confirm">确定</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <i class="iconfont icon-zhaoxiang take-photo"></i>
+        </div>
+    </div>
+</body>
+
+
+<!-- 全局配置data -->
+<script src="./mylib/config.js"></script>
+<!-- 初始化地图 -->
+<script src="./mylib/initMap.js"></script>
+
+<!-- 操作地图标记点创建和显示的业务代码 -->
+<script src="./mylib/mapMarkLogic.js"></script>
+
+<!-- 操作地图测量测距的业务代码 -->
+<script src="./mylib/mapMeasureLogic.js"></script>
+
+<!-- 下达任务的公共代码 -->
+<script src="./mylib/mapOrder.js"></script>
+<!-- 飞行日志的逻辑 -->
+<script src="./mylib/mapFlightPlanLogic.js"></script>
+<!-- 空域的逻辑 -->
+<script src="./mylib/mapFlightAreaLogic.js"></script>
+<!-- 航线的逻辑 -->
+<script src="./mylib/mapFlightLineLogic.js"></script>
+
+<!-- 由于初始化要求，必须要先加载好业务代码才能调用 -->
+<!-- 左部图标选择 -->
+<script src="./mylib/domLeft.js"></script>
+<!-- 标签栏按钮切换 -->
+<script src="./mylib/domTop.js"></script>
+
+
+
+
+
+<!-- 测试代码-->
+<script>
+    // function showInfo(e) {
+    //     console.log(e.point.lng + ", " + e.point.lat);
+    // }
+    // map.addEventListener("click", showInfo);
+</script>
+
+</html>
