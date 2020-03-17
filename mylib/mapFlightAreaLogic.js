@@ -53,7 +53,7 @@ function drawFilghtArea(item) {
             break;
     }
 
-    picOvlay.id = 'flightArea' + item.id
+    picOvlay.id = item.id
     mapOverlay.push(picOvlay)
     map.addOverlay(picOvlay);
 }
@@ -61,7 +61,6 @@ function drawFilghtArea(item) {
 // 开启空域绘制
 function drawArea(sname, stype) {
     tempId++
-    let idName = 'flightArea'
     styleOptions.strokeWeight = 1
     styleOptions.strokeOpacity = 1
     styleOptions.fillOpacity = .5
@@ -107,7 +106,7 @@ function drawArea(sname, stype) {
     function circlecomplete(ov) {
         // 组装渲染数据，应该发往后台
         let item = {
-            id: tempId,
+            id: 'flightArea' + tempId,
             name: sname,
             shape_type: "circle",
             shape_data: {
@@ -120,7 +119,7 @@ function drawArea(sname, stype) {
     function polygoncomplete(ov) {
         // 组装渲染数据，应该发往后台
         let item = {
-            id: tempId,
+            id: 'flightArea' + tempId,
             name: sname,
             shape_type: "polygon",
             shape_data: [...ov.Qn]
@@ -132,7 +131,7 @@ function drawArea(sname, stype) {
         let res = ov.Qn
         map.removeOverlay(ov)
         let item = {
-            id: tempId,
+            id: 'flightArea' + tempId,
             name: sname,
             shape_type: "ellipse",
             shape_data: {
@@ -143,21 +142,21 @@ function drawArea(sname, stype) {
         drawFilghtArea(item)
         drawingManager.close()
         // 增加到空域panel中
-        createInputDom(idName, { id: tempId, name: sname })
+        createInputDom('flightArea', { id: 'flightArea' + tempId, name: sname })
         // 默认选中
-        $(`#${idName + tempId}`).prop('checked', true)
-        optCheckAndMap(idName + tempId, item, drawFilghtArea)
+        $(`#${'flightArea' + tempId}`).prop('checked', true)
+        optCheckAndMap('flightArea' + tempId, item, drawFilghtArea)
     }
     // 内部使用的小方法
     function innerOptMap(ov, item) {
-        ov.id = idName + tempId
+        ov.id = 'flightArea' + tempId
         mapOverlay.push(ov)
         map.addOverlay(ov);
         drawingManager.close()
         // 增加到空域panel中
-        createInputDom(idName, { id: tempId, name: sname })
+        createInputDom('flightArea', { id: 'flightArea' + tempId, name: sname })
         // 默认选中
         $(`#${ov.id}`).prop('checked', true)
-        optCheckAndMap(idName + tempId, item, drawFilghtArea)
+        optCheckAndMap('flightArea' + tempId, item, drawFilghtArea)
     }
 }

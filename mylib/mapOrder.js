@@ -4,7 +4,8 @@ let mapOverlay = []
 // 航路点数组
 let lineMakerArr = []
 // 临时id 为来用数据库创建id
-let tempId = 5
+let tempId = 100
+let currentItem = null
 // 切换显示隐藏
 function panelShowOff() {
     $('.map-right-areaAndLine .title').text(window.childCurrent === 0 ? '空域' : '航线')
@@ -29,7 +30,7 @@ function drawPanel(data, callback, idName) {
     data.forEach(item => {
         createInputDom(idName, item)
         // 给checkbox增加点击判断
-        optCheckAndMap(idName + item.id, item, callback)
+        optCheckAndMap(item.id, item, callback)
     })
     // 创建完dom后再显隐
     panelShowOff()
@@ -104,6 +105,7 @@ function addAreaOrLine() {
                 if (sname === '') return alert('名称不能为空')
                 $('#areaOrLineAddMask').fadeOut(300)
                 // 开启绘制航线模式
+                lineMakerArr = []
                 drawMakerDot(sname)
             }
         }
@@ -142,8 +144,8 @@ function optCheckAndMap(id, item, callback) {
 function createInputDom(idName, item) {
     let dom = $(`
     <div class="check-item">
-        <label for="${idName + item.id}">
-            <input id="${idName + item.id}" type="checkbox"/>
+        <label for="${item.id}">
+            <input id="${item.id}" type="checkbox"/>
             <span>${item.name}</span>
         </label>
     </div>`)

@@ -300,7 +300,7 @@ window.globalData = {
     ],
     flightArea: [
         {
-            id: 0,
+            id: 'flightArea1',
             name: "一号空域",
             shape_type: "ellipse",
             shape_data: {
@@ -308,13 +308,13 @@ window.globalData = {
             }
         },
         {
-            id: 1,
+            id: 'flightArea2',
             name: "二号空域",
             shape_type: "polygon",
             shape_data: [{ lng: 104.04, lat: 30.72 }, { lng: 104.05, lat: 30.75 }, { lng: 104.08, lat: 30.8 }, { lng: 104.19, lat: 30.88 }]
         },
         {
-            id: 2,
+            id: 'flightArea3',
             name: "三号空域",
             shape_type: "circle",
             shape_data: {
@@ -324,12 +324,12 @@ window.globalData = {
     ],
     flightLine: [
         {
-            id: 10,
+            id: 'flightLine1',
             name: "一号航线",
             flight_dots: [{ id: 1, lng: 104.0, lat: 30.7, name: 'a', icon: "./images/m2.png" }, { id: 2, lng: 104.1, lat: 30.8, name: 'b', icon: "./images/m2.png" }, { id: 3, lng: 104.2, lat: 30.7, name: 'c', icon: "./images/m2.png" }]
         },
         {
-            id: 11,
+            id: 'flightLine2',
             name: "二号航线",
             flight_dots: [{ id: 4, lng: 103.9, lat: 30.84, name: 'd', icon: "./images/m2.png" }, { id: 5, lng: 104.13, lat: 30.73, name: 'e', icon: "./images/m2.png" }, { id: 6, lng: 104.12, lat: 30.67222, name: 'f', icon: "./images/m2.png" }]
         }

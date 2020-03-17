@@ -14,8 +14,8 @@ function judgeCurrent(p, isShow) {
     $('.allmap-left').css({
         'width':'10%'
     })
-    // todo 
-    $('.allmap-left').hide()
+    // todo 隐藏
+    // $('.allmap-left').hide()
     // todo
     switch (Number(p)) {
         case 0:
